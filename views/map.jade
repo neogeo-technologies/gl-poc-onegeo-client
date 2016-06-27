@@ -1,0 +1,99 @@
+extends layout
+
+block append link
+
+    link(rel='stylesheet', href='libs/leaflet/dist/leaflet.css')
+    link(rel='stylesheet', href='stylesheets/map.css')
+
+block append script
+
+    script(src='libs/leaflet/dist/leaflet.js')
+    script(src='libs/turf/turf.min.js')
+
+    script.
+        var params = !{JSON.stringify(params)};
+
+block content
+
+    body(ng-controller='onegeoMapCtrl' ng-init='onInit()')
+        div(id='main-container')
+            div(id='wrapper')
+                div(id='sidebar-wrapper')
+
+                    div(class='table-wrapper')
+                        div(id='search-zone' class='table-cell-wrapper')
+                            div(id='search-box' class='input-group')
+                                input(
+                                    type='text'
+                                    class='form-control'
+                                    placeholder='Rechercher avec OneGeo'
+                                    ng-model='textQuery'
+                                    ng-enter='onEnterInputSearchText()'
+                                    ng-change='onChangeInputSearchText()'
+                                    /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
+                                )
+                                div(class='input-group-btn')
+                                    button(
+                                        type='button'
+                                        class='btn btn-default glyphicon glyphicon-search'
+                                        ng-click='onClickButtonSearchSubmit()'
+                                    )
+
+                    div(id='scrollable-zone' class='panel rtl')
+                        div(class='ltr')
+                            div(class='panel-body' ng-if='!count')
+                                //p Aucun résultat pour <strong>{{textQuery}}</strong>.
+                                p Aucun résultat.
+                                p(class='small') Veuillez vérifier l'orthographe de votre requête ou essayer avec différents mots clés.
+
+                            div(class='panel-heading result-count' ng-if='count>0')
+                                span(class='small') {{count}} {{resultsLabel}} ({{time || 0}}s)
+
+                            ul(class='list-group result-list')
+                                li(class='list-group-item' ng-repeat='result in results')
+                                    button(
+                                        role='button'
+                                        id='result-{{result.resultId}}'
+                                        class='btn'
+                                        ng-model='$parent.selectedResultItem'
+                                        ng-value='result.resultId'
+                                        ng-mouseenter='onMouseEnterResultItem(result.this)'
+                                        ng-mouseleave='onMouseLeaveResultItem(result.this)'
+                                        ng-change='onChangeResultItem(result.this)'
+                                        ng-dblclick='onDblClickResultItem(result.this)'
+                                        ng-rightclick='onRightClickResultItem()'
+                                        uib-btn-radio='result.resultId'
+                                        value='{{result.resultId}}'
+                                    )
+                                        img(class='pin' src='images/{{result.this.geometry.type}}.png')
+                                        h5(class='title') {{result.this.source.title}}
+                                        p(ng-bind-html='highlightResult(result.that)')
+
+                            div(id='result-pagination' class='panel-footer' ng-if='count>0')
+                                uib-pagination(
+                                    data-pagination
+                                    class='pagination-sm'
+                                    total-items='count'
+                                    num-pages='numPages'
+                                    items-per-page='itemsPerPage'
+                                    max-size=5
+                                    boundary-links='false'
+                                    boundary-link-numbers='true'
+                                    rotate='true'
+                                    previous-text='\u276e'
+                                    next-text='\u276f'
+                                    ng-model='currentPage'
+                                    ng-change='onPageChanges(currentPage)'
+                                    ng-show='numPages>1'
+                                )
+
+                div(id='page-content-wrapper')
+                    div(id='button-bar')
+                        button(
+                            type='button'
+                            btn-checkbox
+                            class='btn btn-lg glyphicon glyphicon-remove'
+                            ng-click='switchTheInterface(0)'
+                        )
+
+            div(id='map')

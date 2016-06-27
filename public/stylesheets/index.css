@@ -1,0 +1,56 @@
+/* index.css */
+
+.col-centered {
+  float: none;
+  margin: 0 auto;
+}
+
+body {
+  margin-top: 192px;
+  text-align: center;
+}
+
+span#title {
+  font-size: 5.5em;
+  margin-bottom: 30px;
+  font-family: 'Montserrat', 'Helvetica Neue', 'Helvetica', sans-serif;
+  color: #c65d57;
+}
+
+#search-box {
+    background-color: #fff;
+    border-radius: 0px;
+    border-top: 1px solid #bbb;
+    border-right: 1px solid #bbb;
+    border-bottom: 1px solid #bbb;
+    border-left: 1px solid #bbb;
+}
+
+#search-box > input,
+#search-box > input:hover,
+#search-box > input:focus {
+    border-radius: 0;
+    border: 0;
+    text-overflow: ellipsis;
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+#search-box > .input-group-btn > .btn,
+#search-box > .input-group-btn > .btn:hover,
+#search-box > .input-group-btn > .btn:focus {
+    width: auto;
+    height: 100%;
+    top: 0 !important;
+    border-radius: 0;
+    border: 0;
+    background-color: #fff;
+    color: #666;
+    margin: 0;
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+}
+
+#search-box > .input-group-btn > .btn:hover {
+    color: #333;
+}

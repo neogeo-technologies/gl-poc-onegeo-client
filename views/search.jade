@@ -1,0 +1,159 @@
+extends layout
+
+block append link
+
+    link(rel='stylesheet', href='libs/leaflet/dist/leaflet.css')
+    link(rel='stylesheet', href='stylesheets/search.css')
+
+block append script
+
+    script(src='libs/leaflet/dist/leaflet.js')
+
+    script.
+        var params = !{JSON.stringify(params)};
+
+block content
+
+    body(ng-controller='onegeoSearchCtrl' ng-init='onInit()')
+        div(id='header' class='page-header')
+            div(class='container')
+                a(id='title' href='index' ng-click='onClickOnegeoLink()') OneGeo
+                div(id='search-box' class='input-group')
+                    input(
+                        type='text'
+                        class='form-control'
+                        placeholder='Rechercher'
+                        autofocus
+                        ng-model='textQuery'
+                        ng-enter='onEnterInputSearchText()'
+                        ng-change='onChangeInputSearchText()'
+                        /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
+                    )
+                    span(class='input-group-btn')
+                        button(
+                            type='submit'
+                            class='btn btn-default glyphicon glyphicon-search'
+                            ng-click='onClickButtonSearchSubmit()'
+                        )
+
+        div(id='toolbar1' class='panel')
+            div(class='container')
+                div(role='toolbar' class='btn-toolbar')
+                    div(role='group' class='btn-group')
+                        button(
+                            type='button'
+                            class='btn'
+                            ng-model='buttonRadioModelFilter'
+                            uib-btn-radio="'filter'"
+                            ng-disabled='filterDisabled'
+                            uncheckable
+                        ) Filtrer les résultats
+                    button(
+                        type='button'
+                        class='btn btn-link'
+                        ng-click='switchTheInterface(1)'
+                    ) Carte
+
+        div(id='toolbar2' class='panel')
+            div(class='container')
+                div(role='toolbar' class='btn-toolbar')
+                    div(
+                        class='btn-group'
+                        uib-dropdown
+                        ng-repeat='bucket in buckets'
+                        auto-close='outsideClick'
+                    )
+                        button(
+                            role='button'
+                            id='bucket-{{bucket.bucketId}}'
+                            class='btn'
+                            ng-model='$parent.selectedBucketItem'
+                            ng-value='bucket.bucketId'
+                            value='{{result.bucketId}}'
+                            aria-expanded='true'
+                            ng-show='buttonRadioModelFilter'
+                            data-toggle='dropdown'
+                            uib-dropdown-toggle
+                        ) {{bucket.title}} <span class='caret'></span>
+                        ul(
+                            class='dropdown-menu'
+                            uib-dropdown-menu
+                            aria-labelledby='button-template-url'
+                            template-url='bucketItemDropdown'
+                        )
+                        script(type='text/ng-template' id='bucketItemDropdown')
+                            ul(
+                                class='dropdown-menu'
+                                uib-dropdown-menu
+                                aria-labelledby='button-template-url'
+                            )
+                                li(ng-repeat='tag in bucket.tags' class="hidden-xs")
+                                    input(
+                                        type='checkbox'
+                                        id='{{tag.$$hashKey}}'
+                                        ng-init='tag.isChecked'
+                                        ng-model='tag.isChecked'
+                                        ng-change='onFilterChange()'
+                                    )
+                                    label(for='{{tag.$$hashKey}}') {{tag.name}} ({{tag.count}})
+
+        div(id='result-container' class='container')
+            div(class='row')
+
+                div(class='hidden-xs col-sm-6 col-md-7 col-lg-7')
+                    div(class='panel')
+                        div(class='panel-heading')
+                            span {{count}} {{resultsLabel}} ({{time || 0}}s)
+                        ul(class='list-group result-list')
+                            li(class='list-group-item' ng-repeat='result in results')
+                                button(
+                                    role='button'
+                                    id='result-{{result.resultId}}'
+                                    class='btn'
+                                    ng-model='$parent.selectedResultItem'
+                                    ng-value='result.resultId'
+                                    ng-change='onChangeResultItem(result.this)'
+                                    uib-btn-radio='result.resultId'
+                                    value='{{result.resultId}}'
+                                )
+                                    img(class='pin' src='images/{{result.this.geometry.type}}.png')
+                                    h5(class='title') {{result.this.source.title}}
+                                    p(ng-bind-html='highlightResult(result.that)')
+                        div(class='panel-footer' ng-if='count')
+                            div(id='result-pagination')
+                                uib-pagination(
+                                    data-pagination
+                                    class='pagination pagination-sm'
+                                    total-items='count'
+                                    num-pages='numPages'
+                                    items-per-page='itemsPerPage'
+                                    max-size=4
+                                    boundary-links='true'
+                                    boundary-link-numbers='true'
+                                    rotate='true'
+                                    first-text='\u276e\u276e'
+                                    previous-text='\u276e'
+                                    next-text='\u276f'
+                                    last-text='\u276f\u276f'
+                                    ng-model='currentPage'
+                                    ng-change='onPageChanges(currentPage)'
+                                    ng-show='numPages>1'
+                                )
+
+                div(class='hidden-xs col-sm-6 col-md-5 col-lg-5' ng-show='feature')
+                    div(class='panel')
+                        div(class='panel-body')
+                            h4 {{feature.source.title}}
+                            p
+                                samp {{feature.source.name}}
+                            p {{feature.source.abstract}}
+                            p
+                                a(
+                                    role='button'
+                                    href='{{feature.source.url}}?Service=WFS&Request=GetCapabilities'
+                                    ng-if='feature.source.type == \'WFS\'' tooltip='URL du service OGC:WFS'
+                                    tooltip-placement='bottom'
+                                )
+                                    | {{feature.source.url}}
+                            div(id='map-overview')
+                            div(id='ft-properties')

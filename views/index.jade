@@ -1,0 +1,44 @@
+extends layout
+
+block append link
+
+    link(rel='stylesheet', href='stylesheets/index.css')
+
+block content
+
+    body(ng-controller='onegeoIndexCtrl')
+        div(class='container')
+            div(class='row')
+                div(class='col-xs-12 col-sm-8 col-md-6 col-lg-6 col-centered')
+                    span(id='title') OneGeo
+                    form
+                        div(class='form-group')
+                            div(id='search-box' class='input-group')
+                                input(
+                                    type='text'
+                                    class='form-control'
+                                    placeholder='Rechercher'
+                                    autofocus
+                                    ng-model='textQuery'
+                                    ng-enter='lookIn(0)'
+                                    /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
+                                )
+                                span(class='input-group-btn')
+                                    button(
+                                        type='submit'
+                                        class='btn btn-default glyphicon glyphicon-search'
+                                        ng-click='lookIn(0)'
+                                    )
+
+                        div(class='form-group')
+                            button(
+                                type='button'
+                                class='btn btn-default'
+                                ng-click='lookIn(1)'
+                            )
+                                | Voir les r&#233;sultats sur la carte
+
+        div(style='margin-top: 128px;')
+            div(id='copyright')
+                span &#169;&nbsp;2016&nbsp;
+                    a(href='http://www.neogeo-online.net' target='_blank') Neogeo&nbsp;Technologies
