@@ -20,39 +20,21 @@
 
 #search-box {
     max-width: 738px;
+    border: 1px solid transparent;
+    border-radius: 1px;
     background-color: #fff;
-    border-radius: 0px;
-    border: 1px solid #fff;
 }
 
-#search-box > input,
-#search-box > input:hover,
-#search-box > input:focus {
-    border-radius: 0;
-    border: 0;
-    -webkit-text-overflow: ellipsis;
-            text-overflow: ellipsis;
-    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-}
-
-#search-box > .input-group-btn > .btn,
-#search-box > .input-group-btn > .btn:hover,
-#search-box > .input-group-btn > .btn:focus {
-    width: auto;
-    height: 100%;
-    top: 0 !important;
-    border-radius: 0;
-    border: 0;
-    background-color: #fff;
+#search-box input,
+#search-box button {
     color: #666;
-    margin: 0;
-    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
-}
-
-#search-box > .input-group-btn > .btn:hover {
-    color: #333;
+    vertical-align: middle;
+    text-overflow: ellipsis;
+    border-width: 0;
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: 0 0 0 0 rgba(0, 0, 0, 0) inset;
+            box-shadow: 0 0 0 0 rgba(0, 0, 0, 0) inset;
 }
 
 /* Toolbars */

@@ -23,18 +23,28 @@ block content
                                     ng-enter='lookIn(0)'
                                     /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
                                 )
-                                span(class='input-group-btn')
+                                div(class='input-group-btn' role='group')
+                                    button(
+                                        type='button'
+                                        class='btn'
+                                        ng-click="textQuery=''"
+                                        ng-show='textQuery'
+                                    )
+                                        span(class='glyphicon glyphicon-remove')
                                     button(
                                         type='submit'
-                                        class='btn btn-default glyphicon glyphicon-search'
+                                        class='btn'
                                         ng-click='lookIn(0)'
+                                        ng-disabled ='!textQuery'
                                     )
+                                        span(class='glyphicon glyphicon-search')
 
                         div(class='form-group')
                             button(
                                 type='button'
                                 class='btn btn-default'
                                 ng-click='lookIn(1)'
+                                ng-disabled ='!textQuery'
                             )
                                 | Voir les r&#233;sultats sur la carte
 

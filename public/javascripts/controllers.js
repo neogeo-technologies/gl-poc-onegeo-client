@@ -52,7 +52,7 @@ var highlightedLineStyle = {
     weight: 4,
     lineCap: 'butt',
     lineJoin: 'round'
-}
+};
 var selectedLineStyle = {
     className: 'geojsonFeature',
     color: '#0fa5f1',
@@ -61,7 +61,7 @@ var selectedLineStyle = {
     weight: 4,
     lineCap: 'butt',
     lineJoin: 'round'
-}
+};
 var pointStyle = {
     className: 'geojsonFeature',
     color: '#f10f34',
@@ -117,7 +117,7 @@ Onegeo.controller('onegeoIndexCtrl', [
         $scope.$window = $window;
 
         $scope.lookIn = function (num) {
-            if (isEmpty($scope.textQuery)) {
+            if (isEmpty($scope.textQuery)) { // Not needed if using ngDisabled.
                 return;
             };
             if (num === 0) {
@@ -223,23 +223,6 @@ Onegeo.controller('onegeoMainCtrl', [
             return result += lst.join('<br />');
         };
 
-        /*
-        var checkbox2radio = function (a) {
-            for (var i = 0; i < a.length; i++) ( function (n) {
-                $scope.$watch(a[n], function (nVal) {
-                    if (nVal) {
-                        for (var j = 0; j < a.length; j++) {
-                            if (n != j) {
-                                $scope[a[j]] = false;
-                            };
-                        };
-                    };
-                });
-            }) (i);
-        };
-        checkbox2radio(['filter', 'foo', 'bar']);
-        */
-
         $scope.getSuggests = function (value) {
             return results.search(value).then(function (a) {
                 return a.suggests;
@@ -267,12 +250,10 @@ Onegeo.controller('onegeoMainCtrl', [
                     };
                 };
             };
-
             $scope.loadResults();
         };
 
         $scope.loadResults = function () {/* This function is to extend. */};
-
     }
 ]);
 
@@ -303,19 +284,15 @@ Onegeo.controller('onegeoSearchCtrl', [
             minZoom: 1,
             maxZoom: 17
         })
-        .setView([0, 0], 0); // Ugly!
-
-        // Add MapQuest base layer:
-        $scope.overviewMap.addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+        .setView([0, 0], 0) // Ugly!
+        .addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
             subdomains: '1234',
             attribution: '&copy; <a href=\'http://www.openstreetmap.org/\'>OpenStreetMap</a> and contributors, under an <a href=\'http://www.openstreetmap.org/copyright\' title=\'ODbL\'>open license</a>. Tiles Courtesy of <a href=\'http://www.mapquest.com/\'>MapQuest</a> <img src=\'http://developer.mapquest.com/content/osm/mq_logo.png\'>'
         }));
 
         $scope.loadResults = function () {
-
             // Perform a search.
             results.search($scope.textQuery, $scope.filters).then(function (resp) {
-
                 $scope.params = resp.params;
                 $scope.time = resp.time;
                 $scope.count = resp.count;
@@ -326,7 +303,6 @@ Onegeo.controller('onegeoSearchCtrl', [
                 };
 
                 $scope.results = resp.results;
-
                 for (var i = 0; i < $scope.results.length; i ++) {
                     // Add a counter for radio buttons:
                     $scope.results[i].resultId = i;
@@ -348,7 +324,6 @@ Onegeo.controller('onegeoSearchCtrl', [
                 // Then show the first result
                 $scope.selectedResultItem = 0;
                 $scope.showResultItem($scope.results[$scope.selectedResultItem].this);
-
             });
         };
 
@@ -377,7 +352,6 @@ Onegeo.controller('onegeoSearchCtrl', [
         $scope.onChangeResultItem = function (feature) {
             $scope.showResultItem(feature);
         };
-
     }
 ]);
 
@@ -395,13 +369,11 @@ Onegeo.controller('onegeoMapCtrl', [
         // Initialize onegeoMainCtrl and extend it:
         angular.extend(this, $controller('onegeoMainCtrl', {$scope: $scope}));
 
-        /*
         $scope.toggleSideBar = function (event) {
             event.preventDefault();
             angular.element(document.querySelector('#wrapper')).toggleClass('toggled')
-            angular.element(document.querySelector('#menu-toggle')).toggleClass('toggled');
+            angular.element(document.querySelector('#sidebar-toggle')).toggleClass('toggled');
         };
-        */
 
         // Initialize the Leaflet map:
         $scope.map = new L.map('map', {
@@ -414,10 +386,9 @@ Onegeo.controller('onegeoMapCtrl', [
             tap: true,
             touchZoom: true,
             zoomControl: false
-        });
-
-        // Add MapQuest base layer:
-        $scope.map.addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
+        })
+        .addControl(new L.control.zoom({position: 'bottomright'}))
+        .addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
             subdomains: '1234',
             attribution: '&copy; <a href=\'http://www.openstreetmap.org/\'>OpenStreetMap</a> and contributors, under an <a href=\'http://www.openstreetmap.org/copyright\' title=\'ODbL\'>open license</a>. Tiles Courtesy of <a href=\'http://www.mapquest.com/\'>MapQuest</a> <img src=\'http://developer.mapquest.com/content/osm/mq_logo.png\'>'
         }));

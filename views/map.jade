@@ -20,6 +20,14 @@ block content
             div(id='wrapper')
                 div(id='sidebar-wrapper')
 
+                    div(id='panel-strip')
+                        button(
+                            id='sidebar-toggle'
+                            class='btn btn-xs'
+                            href='#'
+                            ng-click='toggleSideBar($event)'
+                        )
+
                     div(class='table-wrapper')
                         div(id='search-zone' class='table-cell-wrapper')
                             div(id='search-box' class='input-group')
@@ -32,11 +40,18 @@ block content
                                     ng-change='onChangeInputSearchText()'
                                     /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
                                 )
-                                div(class='input-group-btn')
+                                div(class='input-group-btn' role='group')
                                     button(
                                         type='button'
-                                        class='btn btn-default glyphicon glyphicon-search'
+                                        class='btn glyphicon glyphicon-remove'
+                                        ng-click="textQuery=''"
+                                        ng-show='textQuery'
+                                    )
+                                    button(
+                                        type='button'
+                                        class='btn glyphicon glyphicon-search'
                                         ng-click='onClickButtonSearchSubmit()'
+                                        ng-disabled ='!textQuery'
                                     )
 
                     div(id='scrollable-zone' class='panel rtl')
@@ -76,9 +91,9 @@ block content
                                     total-items='count'
                                     num-pages='numPages'
                                     items-per-page='itemsPerPage'
-                                    max-size=5
+                                    max-size=4
                                     boundary-links='false'
-                                    boundary-link-numbers='true'
+                                    boundary-link-numbers='false'
                                     rotate='true'
                                     previous-text='\u276e'
                                     next-text='\u276f'

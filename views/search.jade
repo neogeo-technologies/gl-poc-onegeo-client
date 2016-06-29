@@ -29,11 +29,18 @@ block content
                         ng-change='onChangeInputSearchText()'
                         /*uib-typeahead='suggest for suggest in getSuggests($viewValue)'*/
                     )
-                    span(class='input-group-btn')
+                    div(class='input-group-btn' role='group')
                         button(
-                            type='submit'
-                            class='btn btn-default glyphicon glyphicon-search'
+                            type='button'
+                            class='btn glyphicon glyphicon-remove'
+                            ng-click="textQuery=''"
+                            ng-show='textQuery'
+                        )
+                        button(
+                            type='button'
+                            class='btn glyphicon glyphicon-search'
                             ng-click='onClickButtonSearchSubmit()'
+                            ng-disabled ='!textQuery'
                         )
 
         div(id='toolbar1' class='panel')
