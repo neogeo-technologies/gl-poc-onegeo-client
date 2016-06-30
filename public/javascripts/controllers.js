@@ -522,7 +522,7 @@ Onegeo.controller('onegeoMapCtrl', [
             // Pan the target to the center:
             $scope.map.panTo(layer.getBounds().getCenter());
             // And open the popup, which can re-center the map to return the full popup:
-            The(layer);
+            openThePopup(layer);
 
             // Select the search result item:
             $scope.selectedResultItem = layer.feature.resultId;
