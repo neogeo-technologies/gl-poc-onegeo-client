@@ -513,19 +513,23 @@ Onegeo.controller('onegeoMapCtrl', [
         /* Layer events */
 
         function onClick (event) {
+            // Select the chosen feature (the target):
             var layer = event.target;
             if (selectedLayer) {
                 unselectLayer(selectedLayer);
             };
             selectLayer(layer);
-            openThePopup(layer);
+            // Pan the target to the center:
             $scope.map.panTo(layer.getBounds().getCenter());
+            // And open the popup, which can re-center the map to return the full popup:
+            The(layer);
+
             // Select the search result item:
             $scope.selectedResultItem = layer.feature.resultId;
             // Scroll to html element:
             $scope.$location.hash('result-' + layer.feature.resultId);
             $anchorScroll();
-            // Force refresh:
+            // Force refresh (mandatory):
             $scope.$apply();
         };
 
@@ -579,8 +583,8 @@ Onegeo.controller('onegeoMapCtrl', [
                             unselectLayer(selectedLayer);
                         };
                         selectLayer(layer);
-                        openThePopup(layer, getPointOnFeature(layer.feature));
                         $scope.map.fitBounds($scope.layer.getBounds()).panTo(layer.getBounds().getCenter());
+                        openThePopup(layer, getPointOnFeature(layer.feature));
                     };
                 };
             });
@@ -595,8 +599,8 @@ Onegeo.controller('onegeoMapCtrl', [
                             unselectLayer(selectedLayer);
                         };
                         selectLayer(layer);
-                        openThePopup(layer, getPointOnFeature(layer.feature));
                         $scope.map.fitBounds(layer.getBounds());
+                        openThePopup(layer, getPointOnFeature(layer.feature));
                     };
                 };
             });
