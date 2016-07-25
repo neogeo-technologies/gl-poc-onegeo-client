@@ -285,9 +285,8 @@ Onegeo.controller('onegeoSearchCtrl', [
             maxZoom: 17
         })
         .setView([0, 0], 0) // Ugly!
-        .addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
-            subdomains: '1234',
-            attribution: '&copy; <a href=\'http://www.openstreetmap.org/\'>OpenStreetMap</a> and contributors, under an <a href=\'http://www.openstreetmap.org/copyright\' title=\'ODbL\'>open license</a>. Tiles Courtesy of <a href=\'http://www.mapquest.com/\'>MapQuest</a> <img src=\'http://developer.mapquest.com/content/osm/mq_logo.png\'>'
+        .addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
         }));
 
         $scope.loadResults = function () {
@@ -388,9 +387,8 @@ Onegeo.controller('onegeoMapCtrl', [
             zoomControl: false
         })
         .addControl(new L.control.zoom({position: 'bottomright'}))
-        .addLayer(new L.tileLayer('http://otile{s}.mqcdn.com/tiles/1.0.0/osm/{z}/{x}/{y}.png', {
-            subdomains: '1234',
-            attribution: '&copy; <a href=\'http://www.openstreetmap.org/\'>OpenStreetMap</a> and contributors, under an <a href=\'http://www.openstreetmap.org/copyright\' title=\'ODbL\'>open license</a>. Tiles Courtesy of <a href=\'http://www.mapquest.com/\'>MapQuest</a> <img src=\'http://developer.mapquest.com/content/osm/mq_logo.png\'>'
+        .addLayer(new L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>'
         }));
 
         // Init the GeoJSON layer:
