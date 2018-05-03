@@ -63,5 +63,10 @@ app.use(function(err, req, res, next) {
   });
 });
 
+app.listen(8000, function () {
+    console.log('Started on port 8000...')
+});
+
+
 module.exports = app;
 
