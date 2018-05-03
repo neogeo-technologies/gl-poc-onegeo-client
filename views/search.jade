@@ -17,7 +17,7 @@ block content
     body(ng-controller='onegeoSearchCtrl' ng-init='onInit()')
         div(id='header' class='page-header')
             div(class='container')
-                a(id='title' href='index' ng-click='onClickOnegeoLink()') OneGeo
+                a(id='title' href='index' ng-click='onClickOnegeoLink()') Onegeo
                 div(id='search-box' class='input-group')
                     input(
                         type='text'
@@ -124,7 +124,7 @@ block content
                                     value='{{result.resultId}}'
                                 )
                                     img(class='pin' src='images/{{result.this.geometry.type}}.png')
-                                    h5(class='title') {{result.this.source.title}}
+                                    h5(class='title') {{result.this.lineage.resource.name}}
                                     p(ng-bind-html='highlightResult(result.that)')
                         div(class='panel-footer' ng-if='count')
                             div(id='result-pagination')

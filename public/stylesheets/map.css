@@ -271,14 +271,6 @@
     color: #eee;
 }
 
-#sidebar-toggle:after {
-    content: '\2039';
-}
-
-#sidebar-toggle.toggled:after {
-    content: '\203A';
-}
-
 /* Search Box */
 
 #search-box {
@@ -432,4 +424,3 @@
     -webkit-hyphens: auto;
             hyphens: auto;
 }
-

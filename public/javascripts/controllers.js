@@ -322,7 +322,11 @@ Onegeo.controller('onegeoSearchCtrl', [
 
                 // Then show the first result
                 $scope.selectedResultItem = 0;
-                $scope.showResultItem($scope.results[$scope.selectedResultItem].this);
+                $scope.showResultItem({
+                    type: 'Feature',
+                    geometry: $scope.results[$scope.selectedResultItem].this.geometry,
+                    properties: $scope.results[$scope.selectedResultItem].this.properties
+                });
             });
         };
 
@@ -348,8 +352,12 @@ Onegeo.controller('onegeoSearchCtrl', [
 
         /* Result item events */
 
-        $scope.onChangeResultItem = function (feature) {
-            $scope.showResultItem(feature);
+        $scope.onChangeResultItem = function (item) {
+            $scope.showResultItem({
+                type: 'Feature',
+                geometry: item.geometry,
+                properties: item.properties
+            });
         };
     }
 ]);
@@ -487,7 +495,12 @@ Onegeo.controller('onegeoMapCtrl', [
                     // Add a counter for radio buttons:
                     $scope.results[i].resultId = $scope.results[i].this.resultId = i + 1;
                     // Fill the GeoJSON list:
-                    geojsonList.push($scope.results[i].this);
+                    geojsonList.push({
+                        resultId: $scope.results[i].resultId,
+                        type: 'Feature',
+                        geometry: $scope.results[i].this.geometry,
+                        properties: $scope.results[i].this.properties
+                    });
                 };
                 // Set GeoJSON layer:
                 $scope.layer = L.geoJson(geojsonList, {

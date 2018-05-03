@@ -1,48 +1,46 @@
 /* routes/query.js */
 
 var _ = require('underscore');
-var elasticsearch = require('elasticsearch');
+// var elasticsearch = require('elasticsearch');
 var express = require('express');
 var extend = require('extend');
 var Q = require('q');
+var request = require('request');
+
 
 // Load configuration:
 var conf = require('./conf.json');
 
 var router = express.Router();
 
-var client = new elasticsearch.Client(conf.es.client);
+// var client = new elasticsearch.Client(conf.es.client);
 
 function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
     // Performs a ElasticSearch request then returns response into a promise.
     var deferred = Q.defer();
 
     var query = {
-        index: conf.es.index,
-        body: {
-            from: startIndex,
-            size: sizeResponse,
-            query: {
-                filtered: {
-                    query: {
-                        match: {
-                            _all: {
-                                query: textQuery,
-                                operator: 'and',
-                                fuzziness: 'auto'
-                            }
-                        }
+        // index: conf.es.index,
+        from: startIndex,
+        size: sizeResponse,
+        query: {
+            bool: {
+                must: {
+                    multi_match: {
+                        fields: ['properties.*'],
+                        fuzziness: 'auto',
+                        query: textQuery
                     }
                 }
             }
         }
     };
 
-    query.body.suggest = {
+    query.suggest = {
         text: textQuery,
         suggest: {
             phrase: {
-                analyzer: 'custom_uax_analyzer',
+                // analyzer: 'custom_uax_analyzer',
                 field: '_all',
                 size : 1,
                 real_word_error_likelihood: 0.95,
@@ -62,20 +60,16 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
     };
 
     if (highlighted) {
-        query.body.highlight = {
-            require_field_match: false,
+        query.highlight = {
+            // require_field_match: false,
             fields: {
-                tags: {
-                    type: 'plain',
-                    pre_tags: ['<strong>'],
-                    post_tags: ['</strong>']
-                },
                 'properties.*': {
-                    type: 'plain',
-                    force_source: true,
-                    order: 'score',
+                    // type: 'plain'
+                    // force_source: true,
+                    // order: 'score',
+                    post_tags: ['</strong>'],
                     pre_tags: ['<strong>'],
-                    post_tags: ['</strong>']
+                    type: 'plain'
                 }
             }
         }
@@ -86,12 +80,12 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
         for (var i = 0; i < aggregation.length; i ++) {
             // `<field1>=<tag1>,<tag2>,<tag3>;<field2>=<tag4>;<field3>`
             var field = aggregation[i].replace(/([\w\.]+)(\=([^\;]+\,?)+)?/gi, '$1');
-            query.body.aggs = extend(query.body.aggs, {});
-            query.body.aggs[field] = {
+            query.aggs = extend(query.aggs, {});
+            query.aggs[field] = {
                 terms: {
                     field: field,
                     size: 5, // returns top ten..
-                    shard_size: 0,
+                    // shard_size: 0,
                 }
             };
             var tags = aggregation[i].match(/[^\=\,]+/gi).slice(1);
@@ -102,12 +96,22 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
                     term[field] = {value: tags[j]};
                     terms.push({term: term});
                 };
-                query.body.query.filtered.filter = {or: terms};
+                query.query.filtered.filter = {or: terms};
             };
         };
     };
 
-    client.search(query).then(function (body) {
+    request({
+        method: 'POST',
+        uri: 'http://127.0.0.1:8000/api/services/_all/search?_through',
+        body: JSON.stringify(query)
+    }, function (error, response, body) {
+
+        if (response.statusCode != 200) {
+            return deferred.reject;
+        };
+
+        body = JSON.parse(body)
 
         var hitsIn = (body.hits || {}).hits || [];
         var hitsOut = [];
@@ -144,18 +148,18 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
         };
 
         var suggests = [];
-        for (var i = 0; i < body.suggest.suggest.length; i ++) {
-            var suggest = body.suggest.suggest[i];
-            if (!(suggest === undefined)) {
-                var options = [];
-                if (!(suggest.options === undefined)) {
-                    for (var j = 0; j < suggest.options.length; j ++) {
-                        options.push(suggest.options[j].text);
-                    };
-                };
-            };
-            suggests.push(options);
-        };
+        // for (var i = 0; i < body.suggest.suggest.length; i ++) {
+        //     var suggest = body.suggest.suggest[i];
+        //     if (!(suggest === undefined)) {
+        //         var options = [];
+        //         if (!(suggest.options === undefined)) {
+        //             for (var j = 0; j < suggest.options.length; j ++) {
+        //                 options.push(suggest.options[j].text);
+        //             };
+         //         };
+        //     };
+        //     suggests.push(options);
+        // };
 
         deferred.resolve({
             time: (body.took / 1000) % 60, // convert ms in s
@@ -171,7 +175,7 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
             aggregations: aggregations
         });
 
-    }, deferred.reject);
+    });
 
     return deferred.promise;
 };
