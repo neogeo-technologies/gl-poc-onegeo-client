@@ -4,6 +4,14 @@ block append link
 
     link(rel='stylesheet', href='stylesheets/index.css')
 
+block append script
+
+    script(src='libs/leaflet/dist/leaflet.js')
+    script(src='libs/turf/turf.min.js')
+
+    script.
+        var catalog = !{JSON.stringify(catalog)};
+
 block content
 
     body(ng-controller='onegeoIndexCtrl')
@@ -11,7 +19,14 @@ block content
             div(class='row')
                 div(class='col-xs-12 col-sm-8 col-md-6 col-lg-6 col-centered')
                     span(id='title') Onegeo
+                    span(id='sub-title') search
                     form
+                        div(class='form-group')
+                            div(id='select-service' class='select-group')
+                                select(
+                                    class='form-control'
+                                    ng-options='item as item.label disable when item.disabled for item in catalog track by item.id',
+                                    ng-model='serviceSelected')
                         div(class='form-group')
                             div(id='search-box' class='input-group')
                                 input(

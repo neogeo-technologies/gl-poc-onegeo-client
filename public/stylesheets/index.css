@@ -11,17 +11,33 @@ body {
 }
 
 #title {
+    font-weight: 500;
     font-size: 5.5em;
     margin-bottom: 30px;
     color: #c65d57;
 }
 
+#sub-title {
+    position: absolute;
+    float: right;
+    font-size: 1.6em;
+    top: 80px;
+    right: 110px;
+    color: #999;
+}
+
+form {
+    margin-top: 20px
+}
+
+#select-service,
 #search-box {
     border: 1px solid #bbb;
     border-radius: 1px;
     background-color: #fff;
 }
 
+#select-service select,
 #search-box input,
 #search-box button {
     color: #666;

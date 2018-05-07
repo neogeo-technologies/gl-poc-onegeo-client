@@ -1,10 +1,14 @@
 var express = require('express');
 var router = express.Router();
+var utils = require('./utils.js')
 
 router.get('/', function(req, res, next) {
-    res.render('map', {
-        title: 'OneGeo',
-        params: req.query
+    utils.getServices().then(function (data) {
+        res.render('map', {
+            title: 'OneGeo',
+            catalog: data,
+            params: req.query
+        });
     });
 });
 

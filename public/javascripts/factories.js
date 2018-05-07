@@ -6,7 +6,7 @@ var hilited = 'true';
 
 Onegeo.factory('onegeoFactory', ['$q', '$http', '$location', function ($q, $http, $location) {
 
-    var search = function (textQuery, filter) {
+    var search = function (textQuery, filter, service) {
 
         var deferred = $q.defer();
 
@@ -26,7 +26,8 @@ Onegeo.factory('onegeoFactory', ['$q', '$http', '$location', function ($q, $http
             hilited: hilited,
             idx: idx,
             sze: sze,
-            aggs: aggs.join(';')
+            aggs: aggs.join(';'),
+            service: service
         };
 
         $http({

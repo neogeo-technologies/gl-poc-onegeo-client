@@ -116,15 +116,24 @@ Onegeo.controller('onegeoIndexCtrl', [
         $scope.$location = $location;
         $scope.$window = $window;
 
+        $scope.catalog = catalog;
+        $scope.serviceSelected = $scope.catalog[0];
+
         $scope.lookIn = function (num) {
             if (isEmpty($scope.textQuery)) { // Not needed if using ngDisabled.
                 return;
             };
             if (num === 0) {
-                $scope.$location.path('search').search('txt', $scope.textQuery);
+                $scope.$location
+                    .path('search')
+                    .search('txt', $scope.textQuery)
+                    .search('service', $scope.serviceSelected.id);
             };
             if (num === 1) {
-                $scope.$location.path('map').search('txt', $scope.textQuery);
+                $scope.$location
+                    .path('map')
+                    .search('txt', $scope.textQuery)
+                    .search('service', $scope.serviceSelected.id);
             };
             $scope.$location.replace();
             $scope.$window.location.href = $scope.$location.absUrl();
@@ -151,6 +160,14 @@ Onegeo.controller('onegeoMainCtrl', [
         $scope.currentPage = ((sze + idx) / sze) - (((sze + idx) / sze) % 1);
         $scope.itemsPerPage = sze;
 
+        $scope.catalog = catalog;
+        for (var i = 0; i < $scope.catalog.length; i ++) {
+            if ($scope.catalog[i].id == params.service) {
+                $scope.serviceSelected = $scope.catalog[i];
+                break;
+            };
+        };
+
         $scope.onInit = function () {
             if ($scope.textQuery) {
                 return proceed();
@@ -171,6 +188,8 @@ Onegeo.controller('onegeoMainCtrl', [
         $scope.onEnterInputSearchText = function () {
             if ($scope.textQuery) {
                 return proceed({emptyBuckets: true});
+            } else {
+                $scope.onClickOnegeoLink.call(null);
             };
         };
 
@@ -182,7 +201,7 @@ Onegeo.controller('onegeoMainCtrl', [
             timeOut = $timeout(function () {
                 timeOut = null;
                 return proceed({emptyBuckets: true});
-            }, 777);
+            }, 999);
         };
 
         $scope.onPageChanges = function (num) {
@@ -291,7 +310,7 @@ Onegeo.controller('onegeoSearchCtrl', [
 
         $scope.loadResults = function () {
             // Perform a search.
-            results.search($scope.textQuery, $scope.filters).then(function (resp) {
+            results.search($scope.textQuery, $scope.filters, $scope.serviceSelected.id).then(function (resp) {
                 $scope.params = resp.params;
                 $scope.time = resp.time;
                 $scope.count = resp.count;
@@ -477,7 +496,7 @@ Onegeo.controller('onegeoMapCtrl', [
             $scope.map.removeLayer($scope.layer);
 
             // Perform a search:
-            results.search($scope.textQuery, $scope.filters).then(function (resp) {
+            results.search($scope.textQuery, $scope.filters, $scope.serviceSelected.id).then(function (resp) {
 
                 $scope.params = resp.params;
                 $scope.time = resp.time;

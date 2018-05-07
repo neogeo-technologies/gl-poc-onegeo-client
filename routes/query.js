@@ -7,20 +7,20 @@ var extend = require('extend');
 var Q = require('q');
 var request = require('request');
 
-
-// Load configuration:
-var conf = require('./conf.json');
-
 var router = express.Router();
 
-// var client = new elasticsearch.Client(conf.es.client);
+var conf = require('./conf.json');
 
-function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
+function search(textQuery, startIndex, sizeResponse, highlighted, aggregation, service) {
     // Performs a ElasticSearch request then returns response into a promise.
     var deferred = Q.defer();
 
+    if (service == '_all') {
+        service = conf.all_service;
+    };
+    var uri = service + '?_through';
+
     var query = {
-        // index: conf.es.index,
         from: startIndex,
         size: sizeResponse,
         query: {
@@ -103,7 +103,7 @@ function search(textQuery, startIndex, sizeResponse, highlighted, aggregation) {
 
     request({
         method: 'POST',
-        uri: 'http://127.0.0.1:8000/api/services/_all/search?_through',
+        uri: uri,
         body: JSON.stringify(query)
     }, function (error, response, body) {
 
@@ -193,8 +193,9 @@ router.get('/', function (req, res, next) {
     sizeResponse = (typeof req.query.sze !== 'undefined') ? req.query.sze : 10;
     aggregation = (typeof req.query.aggs !== 'undefined') ? req.query.aggs.match(/[\w\.]+(\=([^\;]+\,?)+)?/gi) : null;
     highlighted = (typeof req.query.hilited !== 'undefined') ? true : false;
+    service = (typeof req.query.hilited !== 'undefined') ? req.query.service : '_all';
 
-    search(textQuery, startIndex, sizeResponse, highlighted, aggregation).then(function (a) {
+    search(textQuery, startIndex, sizeResponse, highlighted, aggregation, service).then(function (a) {
 
         var results = [];
         for (var i = 0; i < a.results.length; i ++) {

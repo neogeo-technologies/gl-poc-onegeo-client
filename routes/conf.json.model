@@ -1,9 +1,4 @@
 {
-    "es": {
-        "client": {
-            "host": "localhost:9200",
-            "log": "trace"
-        },
-        "index": "myindex"
-    }
+    "catalog": "http://127.0.0.1/api/catalog",
+    "all_service": "http://127.0.0.1/api/services/_all/search"
 }
